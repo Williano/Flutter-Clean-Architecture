@@ -1,4 +1,4 @@
 import 'dart:io';
 
 String fixtureReader(String name) =>
-    File("test/fixtures/$name").readAsStringSync();
+    File("test/core/fixtures/$name").readAsStringSync();
