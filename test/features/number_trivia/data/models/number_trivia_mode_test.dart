@@ -41,4 +41,19 @@ void main() {
       expect(result, testNumberTriviaModel);
     });
   });
+
+  group("toJson", () {
+    test("should return a JSON map containing the proper data", () async {
+      //arrange
+      final result = testNumberTriviaModel.toJson();
+
+      // act
+      final expectedTriviaMap = {
+        "text": "Test Text",
+        "number": 1.0,
+      };
+      expect(result, expectedTriviaMap);
+      //assert
+    });
+  });
 }
