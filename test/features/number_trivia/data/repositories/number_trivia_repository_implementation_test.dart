@@ -104,6 +104,38 @@ void main() {
       setUp(() {
         when(mockNetworkInfo.isConnected).thenAnswer((_) async => false);
       });
+
+      test("should return last locally data when the cached data is present",
+          () async {
+        // arrarnge
+        when(mockLocalDataSource.getLastNumberTrivia())
+            .thenAnswer((_) async => testNumberTriviaModel);
+
+        // act
+        final result =
+            await repositoryImplementation.getConcreteNumberTrivia(testNumber);
+
+        // assert
+        verifyZeroInteractions(mockRemoteDataSource);
+        verify(mockLocalDataSource.getLastNumberTrivia());
+        expect(result, equals(Right(testNumberTrivia)));
+      });
+
+      test("should return CacheFailure when there is no cached data present",
+          () async {
+        // arrarnge
+        when(mockLocalDataSource.getLastNumberTrivia())
+            .thenThrow(CacheException());
+
+        // act
+        final result =
+            await repositoryImplementation.getConcreteNumberTrivia(testNumber);
+
+        // assert
+        verifyZeroInteractions(mockRemoteDataSource);
+        verify(mockLocalDataSource.getLastNumberTrivia());
+        expect(result, equals(Left(CacheFailure([]))));
+      });
     });
   });
 }
