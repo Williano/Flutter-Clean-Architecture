@@ -8,6 +8,8 @@ import 'package:dartz/dartz.dart';
 import 'package:flutter_clean_architecture/features/number_trivia/domain/repositories/number_trivia_repository.dart';
 import 'package:meta/meta.dart';
 
+typedef Future<NumberTrivia> _ConcreteOrRandomChooser();
+
 class NumberTriviaRepositoryImplementation implements NumberTriviaRepository {
   final NumberTriviaRemoteDataSource remoteDataSource;
   final NumberTriviaLocalDataSource localDataSource;
@@ -21,30 +23,20 @@ class NumberTriviaRepositoryImplementation implements NumberTriviaRepository {
   @override
   Future<Either<Failure, NumberTrivia>> getConcreteNumberTrivia(
       int number) async {
-    if (await networkInfo.isConnected) {
-      try {
-        final remoteTrivia =
-            await remoteDataSource.getConcreteNumberTrivia(number);
-        localDataSource.cacheNumberTrivia(remoteTrivia);
-        return Right(remoteTrivia);
-      } on ServerException {
-        return Left(ServerFailure([]));
-      }
-    } else {
-      try {
-        final localTrivia = await localDataSource.getLastNumberTrivia();
-        return Right(localTrivia);
-      } on CacheException {
-        return Left(CacheFailure([]));
-      }
-    }
+    return await _getTrivia(
+        () => remoteDataSource.getConcreteNumberTrivia(number));
   }
 
   @override
   Future<Either<Failure, NumberTrivia>> getRandomNumberTrivia() async {
+    return await _getTrivia(() => remoteDataSource.getRandomNumberTrivia());
+  }
+
+  Future<Either<Failure, NumberTrivia>> _getTrivia(
+      _ConcreteOrRandomChooser getConcreteOrRandom) async {
     if (await networkInfo.isConnected) {
       try {
-        final remoteTrivia = await remoteDataSource.getRandomNumberTrivia();
+        final remoteTrivia = await getConcreteOrRandom();
         localDataSource.cacheNumberTrivia(remoteTrivia);
         return Right(remoteTrivia);
       } on ServerException {
