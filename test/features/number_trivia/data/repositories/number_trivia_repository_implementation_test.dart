@@ -68,7 +68,7 @@ void main() {
       });
 
       test(
-          "should return remote data when the call to remote data source is successful",
+          "should cache the data locally when the call to remote data source is successful",
           () async {
         //arrange
         when(mockRemoteDataSource.getConcreteNumberTrivia(any))
