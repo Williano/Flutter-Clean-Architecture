@@ -74,12 +74,11 @@ void main() {
         when(mockRemoteDataSource.getConcreteNumberTrivia(any))
             .thenAnswer((_) async => testNumberTriviaModel);
         //act
-        final result =
-            await repositoryImplementation.getConcreteNumberTrivia(testNumber);
+        await repositoryImplementation.getConcreteNumberTrivia(testNumber);
 
         //assert
         verify(mockRemoteDataSource.getConcreteNumberTrivia(testNumber));
-        expect(result, equals(Right(testNumberTrivia)));
+        verify(mockLocalDataSource.cacheNumberTrivia(testNumberTriviaModel));
       });
     });
 
