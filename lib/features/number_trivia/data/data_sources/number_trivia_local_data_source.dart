@@ -36,6 +36,7 @@ class NumberTriviaLocalDataSourceImplementation
 
   @override
   Future<void> cacheNumberTrivia(NumberTriviaModel triviaToCache) {
-    return null;
+    return sharedPreferences.setString(
+        CACHED_NUMBER_TRIVIA, json.encode(triviaToCache.toJson()));
   }
 }
