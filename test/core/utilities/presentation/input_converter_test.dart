@@ -1,5 +1,5 @@
 import 'package:dartz/dartz.dart';
-import 'package:flutter_clean_architecture/core/utilities/presentation/input_converter.dart';
+import 'package:flutter_clean_architecture/core/utilities/presentation/bloc/input_converter.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
