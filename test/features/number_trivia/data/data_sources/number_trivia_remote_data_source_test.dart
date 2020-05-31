@@ -55,5 +55,20 @@ void main() {
       // assert
       expect(result, equals(testNumberTriviaModel));
     });
+
+    test(
+        "should throw a ServerException when the response code is 404 or other",
+        () async {
+      // arrange
+      when(mockHttpClient.get(any, headers: anyNamed("headers"))).thenAnswer(
+          (_) async =>
+              http.Response(fixtureReader("Something went wrong"), 404));
+
+      // act
+      final call = remoteDataSourceImplementation.getConcreteNumberTrivia;
+
+      // assert
+      expect(() => call(testNumber), throwsA(isA<ServerException>()));
+    });
   });
 }

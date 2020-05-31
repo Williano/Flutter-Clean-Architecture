@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter_clean_architecture/core/error/exception.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_clean_architecture/features/number_trivia/data/models/number_trivia_model.dart';
 import 'package:meta/meta.dart';
@@ -28,8 +29,11 @@ class NumberTriviaRemoteDataSourceImplementation
       "http://numbersapi.com/$number",
       headers: {"Content-Type": "application/json"},
     );
-
-    return NumberTriviaModel.fromJson(json.decode(response.body));
+    if (response.statusCode == 200) {
+      return NumberTriviaModel.fromJson(json.decode(response.body));
+    } else {
+      throw ServerException();
+    }
   }
 
   @override
