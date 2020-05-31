@@ -1,8 +1,9 @@
 import 'dart:async';
 
-import 'package:flutter_clean_architecture/core/error/error_messages.dart';
 import 'package:flutter_clean_architecture/core/error/failures_error.dart';
-import 'package:flutter_clean_architecture/core/utilities/presentation/input_converter.dart';
+import 'package:flutter_clean_architecture/core/usecases/usecase.dart';
+import 'package:flutter_clean_architecture/core/utilities/presentation/bloc/either_loaded_or_error_state.dart';
+import 'package:flutter_clean_architecture/core/utilities/presentation/bloc/input_converter.dart';
 import 'package:flutter_clean_architecture/features/number_trivia/domain/entities/number_trivia_entity.dart';
 import 'package:flutter_clean_architecture/features/number_trivia/domain/usecases/get_concrete_number_trivia.dart';
 import 'package:flutter_clean_architecture/features/number_trivia/domain/usecases/get_random_number_trivia.dart';
@@ -44,13 +45,14 @@ class NumberTriviaBloc extends Bloc<NumberTriviaEvent, NumberTriviaState> {
       yield* inputEither.fold((Failure failure) async* {
         yield Error(message: INVALID_INPUT_FAILURE_MESSAGE);
       }, (integer) async* {
-        yield Loading();
         final failureOrTrivia =
             await getConcreteNumberTrivia(Params(number: integer));
-        yield failureOrTrivia.fold(
-            (failure) => Error(message: mapFailureToMessage(failure)),
-            (trivia) => Loaded(trivia: trivia));
+        yield eitherLoadedOrErrorState(failureOrTrivia);
       });
+    } else if (event is GetTriviaForRandomNumber) {
+      yield Loading();
+      final failureOrTrivia = await getRandomNumberTrivia(NoParams());
+      yield* eitherLoadedOrErrorState(failureOrTrivia);
     }
   }
 }
