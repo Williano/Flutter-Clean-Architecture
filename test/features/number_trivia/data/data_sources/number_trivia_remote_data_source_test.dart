@@ -28,8 +28,8 @@ void main() {
   }
 
   void setUpMockHttpClientError404() {
-    when(mockHttpClient.get(any, headers: anyNamed("headers"))).thenAnswer(
-        (_) async => http.Response(fixtureReader("Something went wrong"), 404));
+    when(mockHttpClient.get(any, headers: anyNamed("headers")))
+        .thenAnswer((_) async => http.Response("Something went wrong", 404));
   }
 
   group("getConcreteNumberTrivia", () {
