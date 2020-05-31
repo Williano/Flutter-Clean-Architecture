@@ -22,6 +22,16 @@ void main() {
         NumberTriviaRemoteDataSourceImplementation(client: mockHttpClient);
   });
 
+  void setUpMockHttpClientSuccess200() {
+    when(mockHttpClient.get(any, headers: anyNamed("headers"))).thenAnswer(
+        (_) async => http.Response(fixtureReader("trivia_integer.json"), 200));
+  }
+
+  void setUpMockHttpClientError404() {
+    when(mockHttpClient.get(any, headers: anyNamed("headers"))).thenAnswer(
+        (_) async => http.Response(fixtureReader("Something went wrong"), 404));
+  }
+
   group("getConcreteNumberTrivia", () {
     final testNumber = 1;
     final testNumberTriviaModel = NumberTriviaModel.fromJson(
@@ -31,9 +41,7 @@ void main() {
         "should perform a GET request with application/json header on a URL with number being the endpoint",
         () async {
       // arrange
-      when(mockHttpClient.get(any, headers: anyNamed("headers"))).thenAnswer(
-          (_) async =>
-              http.Response(fixtureReader("trivia_integer.json"), 200));
+      setUpMockHttpClientSuccess200();
       // act
       remoteDataSourceImplementation.getConcreteNumberTrivia(testNumber);
       // assert
@@ -44,10 +52,7 @@ void main() {
     test("should return NumberTrivia when the response code is 200 (success)",
         () async {
       // arrange
-      when(mockHttpClient.get(any, headers: anyNamed("headers"))).thenAnswer(
-          (_) async =>
-              http.Response(fixtureReader("trivia_integer.json"), 200));
-
+      setUpMockHttpClientSuccess200();
       // act
       final result = await remoteDataSourceImplementation
           .getConcreteNumberTrivia(testNumber);
@@ -60,10 +65,7 @@ void main() {
         "should throw a ServerException when the response code is 404 or other",
         () async {
       // arrange
-      when(mockHttpClient.get(any, headers: anyNamed("headers"))).thenAnswer(
-          (_) async =>
-              http.Response(fixtureReader("Something went wrong"), 404));
-
+      setUpMockHttpClientError404();
       // act
       final call = remoteDataSourceImplementation.getConcreteNumberTrivia;
 
