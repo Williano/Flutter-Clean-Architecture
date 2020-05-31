@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter_clean_architecture/core/error/error_messages.dart';
 import 'package:flutter_clean_architecture/core/error/failures_error.dart';
 import 'package:flutter_clean_architecture/core/utilities/presentation/input_converter.dart';
 import 'package:flutter_clean_architecture/features/number_trivia/domain/entities/number_trivia_entity.dart';
@@ -42,7 +43,14 @@ class NumberTriviaBloc extends Bloc<NumberTriviaEvent, NumberTriviaState> {
 
       yield* inputEither.fold((Failure failure) async* {
         yield Error(message: INVALID_INPUT_FAILURE_MESSAGE);
-      }, (integer) => null);
+      }, (integer) async* {
+        yield Loading();
+        final failureOrTrivia =
+            await getConcreteNumberTrivia(Params(number: integer));
+        yield failureOrTrivia.fold(
+            (failure) => Error(message: mapFailureToMessage(failure)),
+            (trivia) => Loaded(trivia: trivia));
+      });
     }
   }
 }
