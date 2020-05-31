@@ -73,4 +73,47 @@ void main() {
       expect(() => call(testNumber), throwsA(isA<ServerException>()));
     });
   });
+
+  /// Test for get random number trivia
+  ///
+  group("getRandomNumberTrivia", () {
+    final testNumberTriviaModel = NumberTriviaModel.fromJson(
+        json.decode(fixtureReader("trivia_integer.json")));
+
+    test(
+        "should perform a GET request with application/json header on a URL with number being the endpoint",
+        () async {
+      // arrange
+      setUpMockHttpClientSuccess200();
+      // act
+      remoteDataSourceImplementation.getRandomNumberTrivia();
+      // assert
+      verify(mockHttpClient.get("http://numbersapi.com/random",
+          headers: {"Content-Type": "application/json"}));
+    });
+
+    test("should return NumberTrivia when the response code is 200 (success)",
+        () async {
+      // arrange
+      setUpMockHttpClientSuccess200();
+      // act
+      final result =
+          await remoteDataSourceImplementation.getRandomNumberTrivia();
+
+      // assert
+      expect(result, equals(testNumberTriviaModel));
+    });
+
+    test(
+        "should throw a ServerException when the response code is 404 or other",
+        () async {
+      // arrange
+      setUpMockHttpClientError404();
+      // act
+      final call = remoteDataSourceImplementation.getRandomNumberTrivia;
+
+      // assert
+      expect(() => call(), throwsA(isA<ServerException>()));
+    });
+  });
 }
