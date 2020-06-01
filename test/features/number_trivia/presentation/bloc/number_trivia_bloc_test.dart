@@ -156,23 +156,23 @@ void main() {
     final testNumberTrivia = NumberTrivia(text: "test trivia", number: 1);
 
     void setUpMockInputConverterSuccess() =>
-        when(mockInputConverter.stringToUnsignedInteger(any)).thenReturn();
+        //when(mockInputConverter.stringToUnsignedInteger(any)).thenReturn();
 
-    test("should get data from the random use case", () async {
-      // arrange
-      setUpMockInputConverterSuccess();
+        test("should get data from the random use case", () async {
+          // arrange
+          setUpMockInputConverterSuccess();
 
-      when((mockGetRadomNumberTrivia(any)))
-          .thenAnswer((_) async => Right(testNumberTrivia));
+          when((mockGetRadomNumberTrivia(any)))
+              .thenAnswer((_) async => Right(testNumberTrivia));
 
-      // act
-      numberTriviaBloc.add((GetTriviaForRandomNumber()));
+          // act
+          numberTriviaBloc.add((GetTriviaForRandomNumber()));
 
-      await untilCalled(mockGetRadomNumberTrivia(any));
+          await untilCalled(mockGetRadomNumberTrivia(any));
 
-      // assert
-      verify(mockGetRadomNumberTrivia(NoParams()));
-    });
+          // assert
+          verify(mockGetRadomNumberTrivia(NoParams()));
+        });
 
     test("should emit [Loading, Loaded] when data is gotten successfully",
         () async {
